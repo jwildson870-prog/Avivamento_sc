@@ -143,7 +143,7 @@ def new_announcement():
     if not title:
         flash('Informe o título do anúncio.', 'error')
         return redirect(url_for('admin.announcements'))
-    item = Announcement(title=title, body=request.form.get('body','').strip())
+    item = Announcement(title=title, body=request.form.get('body','').strip(), published=True, media_type='image')
     file = request.files.get('media')
     if file and file.filename:
         key = save_media(file, 'announcement', allow_video=True)

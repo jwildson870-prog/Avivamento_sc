@@ -45,6 +45,7 @@ COLUMN_TYPES = {
         "body": "TEXT",
         "media": "VARCHAR(255)",
         "media_type": "VARCHAR(20)",
+        "published": "BOOLEAN",
         "created_at": "TIMESTAMP",
     },
 }
@@ -81,6 +82,33 @@ def run_migrations():
         inspector = inspect(connection)
         for table_name, model_table in db.metadata.tables.items():
             _add_missing_columns(connection, table_name, model_table)
+
+        # Normalize legacy announcement rows before enforcing defaults.
+        # Older production databases may contain the published column without
+        # a default, or may have NULL media_type values. These updates preserve
+        # existing rows while making them compatible with the current model.
+        inspector = inspect(connection)
+        if "announcement" in inspector.get_table_names():
+            announcement_columns = _table_columns(inspector, "announcement")
+            if "published" in announcement_columns:
+                connection.execute(
+                    text('UPDATE "announcement" SET "published" = TRUE WHERE "published" IS NULL')
+                )
+                if connection.dialect.name == 'postgresql':
+                    connection.execute(
+                        text('ALTER TABLE \"announcement\" ALTER COLUMN \"published\" SET DEFAULT TRUE')
+                    )
+                    connection.execute(
+                        text('ALTER TABLE \"announcement\" ALTER COLUMN \"published\" SET NOT NULL')
+                    )
+            if "media_type" in announcement_columns:
+                connection.execute(
+                    text("UPDATE \"announcement\" SET \"media_type\" = 'image' WHERE \"media_type\" IS NULL")
+                )
+                if connection.dialect.name == 'postgresql':
+                    connection.execute(
+                        text("ALTER TABLE \"announcement\" ALTER COLUMN \"media_type\" SET DEFAULT 'image'")
+                    )
 
         # Backfill timestamps for legacy rows. Older production databases may
         # have gained these columns through ALTER TABLE, leaving existing rows

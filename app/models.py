@@ -55,5 +55,6 @@ class Announcement(db.Model):
     title = db.Column(db.String(180), nullable=False)
     body = db.Column(db.Text, default='')
     media = db.Column(db.String(255))
-    media_type = db.Column(db.String(20), default='image')
+    media_type = db.Column(db.String(20), default='image', nullable=False)
+    published = db.Column(db.Boolean, default=True, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
