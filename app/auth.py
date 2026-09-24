@@ -14,7 +14,7 @@ def login():
         password = request.form.get('password','')
         user = User.query.filter((User.username == identity) | (User.email == identity)).first()
         if user and user.check_password(password):
-            login_user(user, remember=True)
+            login_user(user, remember=request.form.get('remember') == '1')
             return redirect(url_for('main.home'))
         flash('Usuário/e-mail ou senha inválidos.', 'error')
     return render_template('login.html')
@@ -61,7 +61,7 @@ def delete_account():
     flash('Sua conta foi excluída.', 'success')
     return redirect(url_for('main.home'))
 
-@auth.route('/profile', methods=['POST'])
+@auth.route('/profile', methods=['GET','POST'])
 @login_required
 def profile():
     if request.method == 'POST':
@@ -77,3 +77,4 @@ def profile():
                 delete_image(old)
                 flash('Foto atualizada.', 'success')
         return redirect(url_for('main.profile'))
+    return render_template('profile.html')

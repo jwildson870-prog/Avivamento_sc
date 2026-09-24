@@ -22,7 +22,3 @@ A foto deve ser enviada para o serviço de armazenamento configurado, e o banco 
 
 ## Segurança
 Permissões são verificadas no servidor. Esconder um botão no frontend não é suficiente para proteger uma função.
-
-
-### Correção do formulário de foto
-A página pública de perfil é `/profile`. O envio da foto é feito por `POST` para `/auth/profile`, evitando erro HTTP 405 ao submeter o formulário.

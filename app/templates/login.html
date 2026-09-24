@@ -1,1 +1,52 @@
-{% extends 'base.html' %}{% block title %}Entrar — Avivamento{% endblock %}{% block content %}<section class="auth-wrap"><div class="auth-card"><img class="auth-logo" src="{{ url_for('static', filename='logo.png') }}"><p class="eyebrow">ÁREA DA COMUNIDADE</p><h1>Entrar</h1><form method="post"><label>Usuário ou e-mail<input name="identity" required autocomplete="username"></label><label>Senha<input name="password" type="password" required autocomplete="current-password"></label><button class="btn btn-blue full">Entrar</button></form><p class="muted">Ainda não tem conta? <a class="text-link" href="{{ url_for('auth.register') }}">Criar conta</a></p></div></section>{% endblock %}
+{% extends 'base.html' %}
+{% block title %}Avivamento | Login{% endblock %}
+{% block content %}
+<section class="login-page">
+    <div class="login-container">
+        <div class="logo-section">
+            <div class="logo-circle">
+                <img src="{{ url_for('static', filename='logo.png') }}" alt="Avivamento" class="logo-imagem">
+            </div>
+            <p class="logo-subtitle">Igreja Avivamento</p>
+        </div>
+
+        <h1>Bem-vindo de volta</h1>
+        <p class="welcome-text">Faça login para acessar o portal</p>
+
+        <form id="form-login" method="post" action="{{ url_for('auth.login') }}">
+            <div class="form-group">
+                <label for="email">E-mail ou usuário</label>
+                <input type="text" id="email" name="identity" placeholder="seu@email.com" autocomplete="username" required>
+            </div>
+
+            <div class="form-group">
+                <label for="senha">Senha</label>
+                <div class="input-senha">
+                    <input type="password" id="senha" name="password" placeholder="Sua senha" autocomplete="current-password" required>
+                    <button type="button" id="btn-mostrar" class="btn-olho" aria-label="Mostrar senha" title="Mostrar senha">
+                        <svg class="icone-olho" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"></path>
+                            <circle cx="12" cy="12" r="2.5"></circle>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <div class="linha-lembrar">
+                <label class="check-label">
+                    <input type="checkbox" id="lembrar" name="remember" value="1"> Lembrar de mim
+                </label>
+                <span class="link-senha indisponivel" title="Recuperação de senha ainda não configurada">Esqueci minha senha</span>
+            </div>
+
+            <button type="submit" class="btn-entrar">Entrar</button>
+
+            <div class="divisor"><span>acesso à comunidade</span></div>
+
+            <p class="texto-conta">Não tem conta? <a href="{{ url_for('auth.register') }}" class="link-conta">Criar conta</a></p>
+        </form>
+    </div>
+</section>
+{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">{% endblock %}
+{% block extra_js %}<script src="{{ url_for('static', filename='js/login.js') }}"></script>{% endblock %}
