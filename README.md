@@ -40,3 +40,7 @@ Troque a senha/chave antes de colocar em produção.
 - Servidor: Render, com `gunicorn run:app`.
 
 Nunca commite credenciais do Neon, Backblaze ou `SECRET_KEY`.
+
+## Versão consolidada
+
+Esta cópia reúne as alterações acumuladas do projeto até 24/09/2026: identidade visual e layout com sidebar, áreas da igreja, perfis e uploads, pastores, avisos, cronograma, anúncios com mídia, PWA, integração preparada para Neon/Render, migração do schema e os ajustes recentes de visualização de fotos/vídeos e sidebar restrita às áreas autenticadas.
