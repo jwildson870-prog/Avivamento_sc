@@ -12,7 +12,7 @@
     {% block extra_css %}{% endblock %}
 </head>
 <body>
-{% set show_sidebar = current_user.is_authenticated and (request.endpoint == 'main.profile' or (request.endpoint and request.endpoint.startswith('admin.'))) %}
+{% set show_sidebar = current_user.is_authenticated and request.endpoint not in ['auth.login', 'auth.register', 'auth.logout'] %}
 <header class="topbar{% if show_sidebar %} has-sidebar{% endif %}">
     {% if show_sidebar %}
     <button class="sidebar-toggle" id="sidebar-toggle" type="button" aria-label="Abrir menu lateral" aria-controls="app-sidebar" aria-expanded="false">☰</button>
@@ -40,6 +40,8 @@
         <a href="{{ url_for('main.profile') }}" class="sidebar-link{% if request.endpoint == 'main.profile' %} active{% endif %}"><img src="{{ url_for('static', filename='icons/ui/users.svg') }}" alt="">Meu perfil</a>
         <a href="{{ url_for('main.home') }}#igreja" class="sidebar-link"><img src="{{ url_for('static', filename='icons/ui/home.svg') }}" alt="">Igreja</a>
         <a href="{{ url_for('main.home') }}#pastores" class="sidebar-link"><img src="{{ url_for('static', filename='icons/ui/users.svg') }}" alt="">Pastores</a>
+        <a href="{{ url_for('main.notices') }}" class="sidebar-link{% if request.endpoint == 'main.notices' %} active{% endif %}"><img src="{{ url_for('static', filename='icons/ui/bell.svg') }}" alt="">Avisos</a>
+        <a href="{{ url_for('main.announcements') }}" class="sidebar-link{% if request.endpoint == 'main.announcements' %} active{% endif %}"><img src="{{ url_for('static', filename='icons/ui/file.svg') }}" alt="">Anúncios</a>
         {% if current_user.role == 'admin' %}
         <details class="side-section" data-section="admin" {% if request.endpoint and request.endpoint.startswith('admin.') %}open{% endif %}>
             <summary>Administração</summary>
@@ -47,6 +49,8 @@
                 <a href="{{ url_for('admin.dashboard') }}" class="sidebar-link{% if request.endpoint == 'admin.dashboard' %} active{% endif %}"><img src="{{ url_for('static', filename='icons/ui/settings.svg') }}" alt="">Painel</a>
                 <a href="{{ url_for('admin.users') }}" class="sidebar-link{% if request.endpoint == 'admin.users' %} active{% endif %}"><img src="{{ url_for('static', filename='icons/ui/users.svg') }}" alt="">Usuários</a>
                 <a href="{{ url_for('admin.pastors') }}" class="sidebar-link{% if request.endpoint == 'admin.pastors' %} active{% endif %}"><img src="{{ url_for('static', filename='icons/ui/users.svg') }}" alt="">Pastores</a>
+                <a href="{{ url_for('admin.notices') }}" class="sidebar-link{% if request.endpoint == 'admin.notices' %} active{% endif %}"><img src="{{ url_for('static', filename='icons/ui/bell.svg') }}" alt="">Avisos</a>
+                <a href="{{ url_for('admin.announcements') }}" class="sidebar-link{% if request.endpoint == 'admin.announcements' %} active{% endif %}"><img src="{{ url_for('static', filename='icons/ui/file.svg') }}" alt="">Anúncios</a>
             </div>
         </details>
         {% endif %}

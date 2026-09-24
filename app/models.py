@@ -40,32 +40,20 @@ class Pastor(db.Model):
     name = db.Column(db.String(160), nullable=False)
     role = db.Column(db.String(120), default='Pastor')
     bio = db.Column(db.Text, default='')
-    teaching = db.Column(db.Text, default='')
     photo = db.Column(db.String(255))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-
 
 class Notice(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(180), nullable=False)
     body = db.Column(db.Text, default='')
+    image = db.Column(db.String(255))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    published = db.Column(db.Boolean, default=True, nullable=False)
-
-class ScheduleItem(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(180), nullable=False)
-    day = db.Column(db.String(80), nullable=False)
-    time = db.Column(db.String(40), default='')
-    description = db.Column(db.Text, default='')
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    published = db.Column(db.Boolean, default=True, nullable=False)
 
 class Announcement(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(180), nullable=False)
-    description = db.Column(db.Text, default='')
+    body = db.Column(db.Text, default='')
     media = db.Column(db.String(255))
-    media_type = db.Column(db.String(20), default='none', nullable=False)
+    media_type = db.Column(db.String(20), default='image')
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    published = db.Column(db.Boolean, default=True, nullable=False)
