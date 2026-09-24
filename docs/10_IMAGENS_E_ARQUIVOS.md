@@ -1,26 +1,16 @@
-# Imagens e Arquivos
-
-## Tipos
-O projeto pode trabalhar com:
-- foto de perfil;
-- foto de pastor;
-- imagem institucional;
-- ícones do PWA.
+# Imagens e arquivos
 
 ## Armazenamento
-A arquitetura definida prevê um serviço de armazenamento de imagens, como Cloudinary, em vez de depender do disco temporário do servidor.
 
-## Fluxo
-```text
-Usuário
-→ Flask
-→ armazenamento de imagens
-→ URL/referência
-→ PostgreSQL
-```
+As fotos de perfil e dos pastores usam **Backblaze B2** em produção. O bucket configurado para o projeto é `Avivamento`.
 
-## Regras
-- Validar tipo e tamanho do arquivo.
-- Não confiar somente na extensão.
-- Não armazenar segredos dentro das imagens.
-- Registrar mudanças importantes neste documento.
+Variáveis no Render:
+- `B2_KEY_ID` — ID da chave de aplicação.
+- `B2_APPLICATION_KEY` — chave secreta.
+- `B2_BUCKET_NAME=Avivamento`.
+- `B2_ENDPOINT_URL=https://s3.us-east-005.backblazeb2.com`.
+- `B2_REGION=us-east-005`.
+
+O bucket pode permanecer privado. O aplicativo gera URLs temporárias assinadas para exibir as imagens.
+
+Sem credenciais B2, o sistema usa `app/static/uploads/` localmente.

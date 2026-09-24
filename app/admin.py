@@ -1,10 +1,8 @@
-from pathlib import Path
-from uuid import uuid4
 from functools import wraps
 from flask import Blueprint, render_template, request, redirect, url_for, flash, abort, current_app
 from flask_login import login_required, current_user
-from werkzeug.utils import secure_filename
 from .models import db, User, Pastor, SiteContent
+from .storage import delete_image, save_image
 
 admin = Blueprint('admin', __name__)
 
@@ -47,11 +45,11 @@ def new_pastor():
         pastor = Pastor(name=request.form.get('name','').strip(), role=request.form.get('role','Pastor').strip(), bio=request.form.get('bio','').strip())
         file = request.files.get('photo')
         if file and file.filename:
-            ext = Path(secure_filename(file.filename)).suffix.lower()
-            if ext in {'.jpg','.jpeg','.png','.webp'}:
-                filename = f'pastor_{uuid4().hex}{ext}'
-                file.save(Path(current_app.config['UPLOAD_FOLDER']) / filename)
-                pastor.photo = filename
+            new_key = save_image(file, 'pastor')
+            if new_key:
+                pastor.photo = new_key
+            else:
+                flash('Use JPG, PNG ou WEBP.', 'error')
         if not pastor.name:
             flash('Informe o nome do pastor.', 'error')
         else:
@@ -68,14 +66,13 @@ def edit_pastor(pastor_id):
         pastor.bio = request.form.get('bio','').strip()
         file = request.files.get('photo')
         if file and file.filename:
-            ext = Path(secure_filename(file.filename)).suffix.lower()
-            if ext in {'.jpg','.jpeg','.png','.webp'}:
-                if pastor.photo:
-                    old = Path(current_app.config['UPLOAD_FOLDER']) / pastor.photo
-                    if old.exists(): old.unlink()
-                filename = f'pastor_{uuid4().hex}{ext}'
-                file.save(Path(current_app.config['UPLOAD_FOLDER']) / filename)
-                pastor.photo = filename
+            new_key = save_image(file, 'pastor')
+            if new_key:
+                old = pastor.photo
+                pastor.photo = new_key
+                delete_image(old)
+            else:
+                flash('Use JPG, PNG ou WEBP.', 'error')
         db.session.commit(); flash('Pastor atualizado.', 'success'); return redirect(url_for('admin.pastors'))
     return render_template('admin/pastor_form.html', pastor=pastor)
 
@@ -83,9 +80,7 @@ def edit_pastor(pastor_id):
 @admin_required
 def delete_pastor(pastor_id):
     pastor = Pastor.query.get_or_404(pastor_id)
-    if pastor.photo:
-        p = Path(current_app.config['UPLOAD_FOLDER']) / pastor.photo
-        if p.exists(): p.unlink()
+    delete_image(pastor.photo)
     db.session.delete(pastor); db.session.commit(); flash('Pastor removido.', 'success')
     return redirect(url_for('admin.pastors'))
 

@@ -1,26 +1,13 @@
-# Banco de Dados
-
-## Banco definido
-O projeto não usa Supabase.
-
-A arquitetura planejada utiliza **PostgreSQL** como banco de dados.
-
-## Responsabilidades
-O banco guarda dados estruturados, como:
-- usuários;
-- perfis;
-- pastores;
-- conteúdo institucional;
-- configurações necessárias.
-
-## Princípios
-- Senhas nunca são armazenadas em texto puro.
-- Segredos e credenciais ficam em variáveis de ambiente.
-- Alterações de esquema devem ser documentadas.
-- Migrações devem ser reproduzíveis.
+# Banco de dados
 
 ## Produção
-A instância PostgreSQL usada em produção deve ser gerenciada separadamente do código da aplicação.
 
-## Atualização
-Cada mudança de tabela, coluna, índice ou relacionamento deve ser registrada aqui.
+O projeto usa **PostgreSQL externo no Neon**. A conexão é fornecida pela variável `DATABASE_URL`.
+
+O código converte URLs `postgres://`/`postgresql://` para o driver `psycopg` usado pelo SQLAlchemy.
+
+## Desenvolvimento local
+
+Sem `DATABASE_URL`, o projeto usa SQLite local em `instance/avivamento.db`.
+
+Nunca coloque `DATABASE_URL` ou senhas do Neon no GitHub.

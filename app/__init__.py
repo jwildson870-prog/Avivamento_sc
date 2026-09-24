@@ -2,6 +2,7 @@ from pathlib import Path
 from flask import Flask
 from flask_login import LoginManager
 from .models import db, User
+from .storage import image_url
 
 login_manager = LoginManager()
 login_manager.login_view = 'auth.login'
@@ -14,6 +15,7 @@ def create_app():
     Path(app.instance_path).mkdir(parents=True, exist_ok=True)
 
     db.init_app(app)
+    app.jinja_env.globals['image_url'] = image_url
     login_manager.init_app(app)
 
     from .routes import main
@@ -25,8 +27,8 @@ def create_app():
 
     with app.app_context():
         db.create_all()
-        if not User.query.filter_by(username='admin').first():
-            User.create_admin('admin', 'admin@avivamento.local', 'admin123')
+        if app.config.get('INITIAL_ADMIN_PASSWORD') and not User.query.filter_by(username=app.config['INITIAL_ADMIN_USERNAME']).first():
+            User.create_admin(app.config['INITIAL_ADMIN_USERNAME'], app.config['INITIAL_ADMIN_EMAIL'], app.config['INITIAL_ADMIN_PASSWORD'])
 
     return app
 

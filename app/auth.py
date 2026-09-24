@@ -1,9 +1,7 @@
-from pathlib import Path
-from uuid import uuid4
 from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app
 from flask_login import login_user, logout_user, login_required, current_user
-from werkzeug.utils import secure_filename
 from .models import db, User
+from .storage import delete_image, save_image
 
 auth = Blueprint('auth', __name__)
 
@@ -58,9 +56,7 @@ def delete_account():
     user = current_user
     photo = user.photo
     db.session.delete(user); db.session.commit()
-    if photo:
-        p = Path(current_app.config['UPLOAD_FOLDER']) / photo
-        if p.exists(): p.unlink()
+    delete_image(photo)
     logout_user()
     flash('Sua conta foi excluída.', 'success')
     return redirect(url_for('main.home'))
@@ -71,17 +67,14 @@ def profile():
     if request.method == 'POST':
         file = request.files.get('photo')
         if file and file.filename:
-            ext = Path(secure_filename(file.filename)).suffix.lower()
-            if ext not in {'.jpg','.jpeg','.png','.webp'}:
+            new_key = save_image(file, f'user_{current_user.id}')
+            if not new_key:
                 flash('Use JPG, PNG ou WEBP.', 'error')
             else:
-                filename = f'user_{current_user.id}_{uuid4().hex}{ext}'
-                file.save(Path(current_app.config['UPLOAD_FOLDER']) / filename)
-                if current_user.photo:
-                    old = Path(current_app.config['UPLOAD_FOLDER']) / current_user.photo
-                    if old.exists(): old.unlink()
-                current_user.photo = filename
+                old = current_user.photo
+                current_user.photo = new_key
                 db.session.commit()
+                delete_image(old)
                 flash('Foto atualizada.', 'success')
         return redirect(url_for('main.profile'))
     return render_template('profile.html')

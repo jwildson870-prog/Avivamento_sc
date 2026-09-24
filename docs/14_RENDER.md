@@ -1,30 +1,22 @@
-# Deploy no Render
+# Render
 
-## Aplicação
-O Render será o servidor de execução da aplicação Flask/Python.
+- Tipo: Web Service
+- Branch: `main`
+- Build Command: `pip install -r requirements.txt`
+- Start Command: `gunicorn run:app`
+- Auto-Deploy: habilitado
 
-## Configuração
-O serviço deve obter:
-- código pelo GitHub;
-- dependências pelo `requirements.txt`;
-- configurações sensíveis por variáveis de ambiente;
-- conexão com PostgreSQL por variável de conexão segura.
+## Variáveis
 
-## Banco
-O PostgreSQL deve ser externo ao processo da aplicação e persistente.
+- `SECRET_KEY`
+- `DATABASE_URL` — conexão do Neon
+- `B2_KEY_ID`
+- `B2_APPLICATION_KEY`
+- `B2_BUCKET_NAME=Avivamento`
+- `B2_ENDPOINT_URL=https://s3.us-east-005.backblazeb2.com`
+- `B2_REGION=us-east-005`
+- `INITIAL_ADMIN_USERNAME`
+- `INITIAL_ADMIN_EMAIL`
+- `INITIAL_ADMIN_PASSWORD`
 
-## Produção
-Antes do primeiro lançamento:
-1. configurar o serviço;
-2. configurar variáveis de ambiente;
-3. configurar PostgreSQL;
-4. testar conexão;
-5. executar migrações;
-6. publicar;
-7. testar login;
-8. testar área administrativa;
-9. testar uploads;
-10. testar PWA.
-
-## Histórico
-O histórico oficial de cada publicação fica em `docs/12_DEPLOY.md`.
+`INITIAL_ADMIN_PASSWORD` nunca deve ser commitada.

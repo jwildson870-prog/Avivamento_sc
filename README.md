@@ -31,3 +31,12 @@ Abra `http://localhost:5000`.
 - senha: `admin123`
 
 Troque a senha/chave antes de colocar em produção.
+
+
+## Integrações de produção
+
+- PostgreSQL: Neon, via `DATABASE_URL`.
+- Arquivos e imagens: Backblaze B2, via API S3-compatible.
+- Servidor: Render, com `gunicorn run:app`.
+
+Nunca commite credenciais do Neon, Backblaze ou `SECRET_KEY`.
