@@ -26,3 +26,9 @@ Antes do lançamento, revisar:
 
 ## Atualização
 Toda nova funcionalidade que manipule dados ou permissões deve receber uma seção de segurança aqui.
+
+## Proteção CSRF
+
+A aplicação utiliza `Flask-WTF` com `CSRFProtect` para proteger requisições `POST`. Todos os formulários POST do sistema enviam um token CSRF e requisições com token ausente, inválido ou expirado são bloqueadas com HTTP 400.
+
+A proteção cobre autenticação, cadastro, perfil, uploads e ações administrativas, incluindo alterações e exclusões.

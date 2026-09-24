@@ -1,11 +1,13 @@
 from pathlib import Path
-from flask import Flask
+from flask import Flask, render_template
 from flask_login import LoginManager
+from flask_wtf.csrf import CSRFProtect, CSRFError
 from .models import db, User
 from .migrations import run_migrations
 from .storage import image_url
 
 login_manager = LoginManager()
+csrf = CSRFProtect()
 login_manager.login_view = 'auth.login'
 login_manager.login_message = 'Faça login para acessar esta área.'
 
@@ -18,6 +20,12 @@ def create_app():
     db.init_app(app)
     app.jinja_env.globals['image_url'] = image_url
     login_manager.init_app(app)
+    csrf.init_app(app)
+
+    @app.errorhandler(CSRFError)
+    def handle_csrf_error(error):
+        app.logger.warning('Requisição bloqueada por CSRF: %s', error.description)
+        return render_template('errors/400.html', message='A solicitação expirou ou não é válida. Recarregue a página e tente novamente.'), 400
 
     from .routes import main
     from .auth import auth

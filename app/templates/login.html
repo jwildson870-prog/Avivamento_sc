@@ -13,7 +13,7 @@
         <h1>Bem-vindo de volta</h1>
         <p class="welcome-text">Faça login para acessar o portal</p>
 
-        <form id="form-login" method="post" action="{{ url_for('auth.login') }}">
+        <form id="form-login" method="post" action="{{ url_for('auth.login') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <div class="form-group">
                 <label for="email">E-mail ou usuário</label>
                 <input type="text" id="email" name="identity" placeholder="seu@email.com" autocomplete="username" required>
