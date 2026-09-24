@@ -108,10 +108,17 @@ def new_notice():
     if file and file.filename:
         key = save_image(file, 'notice')
         if not key:
-            flash('Use JPG, PNG ou WEBP.', 'error')
+            flash('Não foi possível enviar a imagem. Verifique o formato, o tamanho e o armazenamento.', 'error')
             return redirect(url_for('admin.notices'))
         item.image = key
-    db.session.add(item); db.session.commit()
+    try:
+        db.session.add(item)
+        db.session.commit()
+    except Exception:
+        db.session.rollback()
+        current_app.logger.exception('Falha ao salvar aviso no banco de dados.')
+        flash('Não foi possível salvar o aviso. Tente novamente.', 'error')
+        return redirect(url_for('admin.notices'))
     flash('Aviso adicionado.', 'success')
     return redirect(url_for('admin.notices'))
 
@@ -141,11 +148,18 @@ def new_announcement():
     if file and file.filename:
         key = save_media(file, 'announcement', allow_video=True)
         if not key:
-            flash('Use JPG, PNG, WEBP, MP4, WEBM ou OGG.', 'error')
+            flash('Não foi possível enviar a mídia. Verifique o formato, o tamanho e o armazenamento.', 'error')
             return redirect(url_for('admin.announcements'))
         item.media = key
         item.media_type = 'video' if Path(file.filename).suffix.lower() in {'.mp4','.webm','.ogg'} else 'image'
-    db.session.add(item); db.session.commit()
+    try:
+        db.session.add(item)
+        db.session.commit()
+    except Exception:
+        db.session.rollback()
+        current_app.logger.exception('Falha ao salvar anúncio no banco de dados.')
+        flash('Não foi possível salvar o anúncio. Tente novamente.', 'error')
+        return redirect(url_for('admin.announcements'))
     flash('Anúncio adicionado.', 'success')
     return redirect(url_for('admin.announcements'))
 

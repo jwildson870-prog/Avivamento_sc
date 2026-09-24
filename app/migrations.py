@@ -82,6 +82,25 @@ def run_migrations():
         for table_name, model_table in db.metadata.tables.items():
             _add_missing_columns(connection, table_name, model_table)
 
+        # Backfill timestamps for legacy rows. Older production databases may
+        # have gained these columns through ALTER TABLE, leaving existing rows
+        # with NULL values. The application sorts by and formats these fields,
+        # so NULL timestamps could cause a 500 when rendering admin/public lists.
+        # COALESCE keeps existing valid timestamps untouched and is supported by
+        # both PostgreSQL and SQLite.
+        for table_name in ("user", "pastor", "notice", "announcement"):
+            inspector = inspect(connection)
+            if table_name in inspector.get_table_names():
+                columns = _table_columns(inspector, table_name)
+                if "created_at" in columns:
+                    connection.execute(
+                        text(
+                            f'UPDATE "{table_name}" '
+                            'SET "created_at" = CURRENT_TIMESTAMP '
+                            'WHERE "created_at" IS NULL'
+                        )
+                    )
+
         # Re-inspect after ALTER TABLE operations and ensure every expected
         # application table exists. This is intentionally idempotent.
         inspect(connection)

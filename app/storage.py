@@ -39,7 +39,16 @@ def save_media(file_storage, prefix: str, allow_video: bool = False) -> str | No
     key = f"media/{prefix}/{uuid4().hex}{ext}"
     if _b2_enabled():
         content_type = file_storage.mimetype or 'application/octet-stream'
-        _client().upload_fileobj(file_storage, current_app.config['B2_BUCKET_NAME'], key, ExtraArgs={'ContentType': content_type})
+        try:
+            _client().upload_fileobj(
+                file_storage,
+                current_app.config['B2_BUCKET_NAME'],
+                key,
+                ExtraArgs={'ContentType': content_type},
+            )
+        except Exception:
+            current_app.logger.exception('Falha ao enviar arquivo para o Backblaze B2: %s', key)
+            return None
         return key
     destination = Path(current_app.config['UPLOAD_FOLDER']) / key
     destination.parent.mkdir(parents=True, exist_ok=True)
@@ -55,7 +64,16 @@ def save_image(file_storage, prefix: str) -> str | None:
     key = f"profile/{prefix}/{uuid4().hex}{ext}" if prefix.startswith('user_') else f"images/{prefix}_{uuid4().hex}{ext}"
     if _b2_enabled():
         content_type = file_storage.mimetype or 'application/octet-stream'
-        _client().upload_fileobj(file_storage, current_app.config['B2_BUCKET_NAME'], key, ExtraArgs={'ContentType': content_type})
+        try:
+            _client().upload_fileobj(
+                file_storage,
+                current_app.config['B2_BUCKET_NAME'],
+                key,
+                ExtraArgs={'ContentType': content_type},
+            )
+        except Exception:
+            current_app.logger.exception('Falha ao enviar imagem para o Backblaze B2: %s', key)
+            return None
         return key
     destination = Path(current_app.config['UPLOAD_FOLDER']) / key
     destination.parent.mkdir(parents=True, exist_ok=True)
@@ -65,7 +83,7 @@ def save_image(file_storage, prefix: str) -> str | None:
 def delete_image(key: str | None) -> None:
     if not key:
         return
-    if _b2_enabled() and (key.startswith('images/') or key.startswith('media/')):
+    if _b2_enabled() and (key.startswith('images/') or key.startswith('media/') or key.startswith('profile/')):
         try:
             _client().delete_object(Bucket=current_app.config['B2_BUCKET_NAME'], Key=key)
         except Exception:
@@ -78,6 +96,14 @@ def delete_image(key: str | None) -> None:
 def image_url(key: str | None) -> str | None:
     if not key:
         return None
-    if _b2_enabled() and (key.startswith('images/') or key.startswith('media/')):
-        return _client().generate_presigned_url('get_object', Params={'Bucket': current_app.config['B2_BUCKET_NAME'], 'Key': key}, ExpiresIn=current_app.config['B2_PRESIGNED_URL_SECONDS'])
+    if _b2_enabled() and (key.startswith('images/') or key.startswith('media/') or key.startswith('profile/')):
+        try:
+            return _client().generate_presigned_url(
+                'get_object',
+                Params={'Bucket': current_app.config['B2_BUCKET_NAME'], 'Key': key},
+                ExpiresIn=current_app.config['B2_PRESIGNED_URL_SECONDS'],
+            )
+        except Exception:
+            current_app.logger.exception('Falha ao gerar URL do Backblaze B2: %s', key)
+            return None
     return f"/static/uploads/{key}"

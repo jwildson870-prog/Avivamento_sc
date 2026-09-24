@@ -15,7 +15,7 @@ class Config:
     SQLALCHEMY_DATABASE_URI = database_url or f"sqlite:///{BASE_DIR / 'instance' / 'avivamento.db'}"
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-    MAX_CONTENT_LENGTH = 4 * 1024 * 1024
+    MAX_CONTENT_LENGTH = 50 * 1024 * 1024
     UPLOAD_FOLDER = BASE_DIR / 'app' / 'static' / 'uploads'
 
     B2_KEY_ID = os.environ.get('B2_KEY_ID')
