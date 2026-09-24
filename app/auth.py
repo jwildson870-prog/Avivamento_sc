@@ -61,7 +61,7 @@ def delete_account():
     flash('Sua conta foi excluída.', 'success')
     return redirect(url_for('main.home'))
 
-@auth.route('/profile', methods=['GET','POST'])
+@auth.route('/profile', methods=['POST'])
 @login_required
 def profile():
     if request.method == 'POST':
@@ -77,4 +77,3 @@ def profile():
                 delete_image(old)
                 flash('Foto atualizada.', 'success')
         return redirect(url_for('main.profile'))
-    return render_template('profile.html')
