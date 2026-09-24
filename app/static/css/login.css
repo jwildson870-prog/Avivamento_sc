@@ -1,0 +1,88 @@
+.login-page {
+    min-height: calc(100vh - 120px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 20px;
+}
+
+.login-container {
+    width: 100%;
+    max-width: 420px;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-radius: 20px;
+    padding: 40px 30px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.logo-section { text-align: center; margin-bottom: 32px; }
+.logo-circle {
+    width: 140px; height: 140px; margin: 0 auto 12px; background: #000;
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    border: 2px solid rgba(255, 255, 255, 0.2); overflow: hidden;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.05);
+}
+.logo-imagem { width: 100%; height: 100%; object-fit: cover; }
+.logo-subtitle { color: #b3b3b3; font-size: .9rem; }
+.login-container h1 { color: #fff; font-size: 1.5rem; text-align: center; margin: 0 0 6px; }
+.welcome-text { color: #999; text-align: center; margin: 0 0 24px; font-size: .95rem; }
+
+.mensagem-erro {
+    background: rgba(220, 53, 69, .15); border: 1px solid rgba(220, 53, 69, .3);
+    color: #ff9999; padding: 12px; border-radius: 10px; margin-bottom: 20px;
+    text-align: center; font-size: .9rem;
+}
+
+.form-group { margin-bottom: 20px; }
+.login-container label { display: block; color: #ddd; margin-bottom: 8px; font-size: .9rem; }
+.login-container input[type="text"], .login-container input[type="password"] {
+    width: 100%; padding: 14px 16px; background: rgba(255,255,255,.08);
+    border: 1px solid rgba(255,255,255,.15); border-radius: 12px; color: #fff;
+    font-size: 1rem; outline: none; transition: border .3s, background .3s;
+}
+.login-container input:focus { border-color: #888; background: rgba(255,255,255,.1); }
+.login-container input::placeholder { color: #777; }
+
+.input-senha { position: relative; }
+.input-senha input { padding-right: 50px !important; }
+.btn-olho {
+    position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+    width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;
+    background: transparent; border: 0; border-radius: 8px; cursor: pointer; padding: 6px;
+}
+.btn-olho:hover { background: rgba(255,255,255,.08); }
+.icone-olho { width: 21px; height: 21px; fill: none; stroke: #bdbdbd; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+.linha-lembrar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 10px; }
+.check-label { display: flex !important; align-items: center; gap: 8px; color: #ccc !important; font-size: .9rem !important; cursor: pointer; margin: 0 !important; }
+.check-label input { width: auto !important; margin: 0; }
+.link-senha { color: #aaa; text-decoration: none; font-size: .9rem; }
+.link-senha.indisponivel { cursor: default; opacity: .75; }
+
+.btn-entrar {
+    width: 100%; padding: 14px; background: #fff; color: #000; border: none;
+    border-radius: 12px; font-size: 1rem; font-weight: 600; cursor: pointer;
+    transition: transform .2s, background .2s; margin-bottom: 20px;
+}
+.btn-entrar:hover { background: #eee; transform: translateY(-2px); }
+.btn-entrar:active { transform: translateY(0); }
+
+.divisor { text-align: center; color: #666; font-size: .85rem; margin: 10px 0 20px; position: relative; }
+.divisor::before, .divisor::after { content: ''; position: absolute; top: 50%; width: 30%; height: 1px; background: rgba(255,255,255,.1); }
+.divisor::before { left: 0; } .divisor::after { right: 0; }
+.texto-conta { text-align: center; color: #999; font-size: .9rem; margin: 0; }
+.link-conta { color: #fff; text-decoration: none; font-weight: 500; margin-left: 4px; }
+.link-conta:hover { text-decoration: underline; }
+
+@media (max-width: 480px) {
+    .login-page { padding: 20px 12px; }
+    .login-container { padding: 30px 20px; }
+    .logo-circle { width: 120px; height: 120px; }
+    .login-container h1 { font-size: 1.3rem; }
+    .linha-lembrar { flex-direction: column; align-items: flex-start; }
+}
+
+@media (min-width: 768px) { .login-container { padding: 45px 35px; } }

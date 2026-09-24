@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block title %}Anúncios — Admin{% endblock %}
+{% block content %}
+<section class="page-head"><p class="eyebrow">ADMINISTRAÇÃO</p><h1>Anúncios</h1><p>Publique anúncios com imagem ou vídeo. Toque na mídia para abrir em tela inteira.</p></section>
+<section class="panel"><form method="post" enctype="multipart/form-data" action="{{ url_for('admin.new_announcement') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><label>Título<input name="title" required></label><label>Descrição<textarea name="body" rows="5"></textarea></label><label>Imagem ou vídeo<input type="file" name="media" accept="image/jpeg,image/png,image/webp,video/mp4,video/webm,video/ogg"></label><button class="btn btn-blue">Adicionar anúncio</button></form></section>
+<section class="cards-grid">
+{% for item in announcements %}<article class="panel media-card"><div class="section-head"><div><h2>{{ item.title }}</h2><small>{{ item.created_at.strftime('%d/%m/%Y %H:%M') if item.created_at else 'Data não informada' }}</small></div><form method="post" action="{{ url_for('admin.delete_announcement', announcement_id=item.id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="btn btn-danger" type="submit">Excluir</button></form></div><p>{{ item.body }}</p>{% if item.media_type == 'video' %}<video src="{{ image_url(item.media) }}" controls preload="metadata"></video>{% elif item.media %}<img src="{{ image_url(item.media) }}" alt="{{ item.title }}" loading="lazy">{% endif %}</article>{% else %}<div class="panel"><p>Nenhum anúncio cadastrado.</p></div>{% endfor %}
+</section>
+{% endblock %}
