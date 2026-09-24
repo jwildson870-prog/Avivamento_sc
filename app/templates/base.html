@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <meta name="theme-color" content="#000000">
+    <meta name="theme-color" content="#0b1628">
     <meta name="description" content="Igreja Avivamento — comunidade, pastores e informações da igreja.">
     <link rel="manifest" href="{{ url_for('static', filename='manifest.webmanifest') }}">
     <link rel="icon" href="{{ url_for('static', filename='icon-192.png') }}">
@@ -11,28 +11,86 @@
     <title>{% block title %}Avivamento{% endblock %}</title>
     {% block extra_css %}{% endblock %}
 </head>
-<body>
+<body class="app-body">
+<input class="menu-check" type="checkbox" id="menuCheck" aria-hidden="true">
 <header class="topbar">
-    <a class="brand" href="{{ url_for('main.home') }}"><img src="{{ url_for('static', filename='logo.png') }}" alt="Avivamento"><span>AVIVAMENTO</span></a>
-    <nav>
-        <a href="{{ url_for('main.home') }}">Início</a>
-        {% if current_user.is_authenticated %}
-            <a href="{{ url_for('main.profile') }}">Perfil</a>
-            {% if current_user.role == 'admin' %}<a href="{{ url_for('admin.dashboard') }}">Admin</a>{% endif %}
-            <a class="link-muted" href="{{ url_for('auth.logout') }}">Sair</a>
-        {% else %}
-            <a class="btn btn-blue btn-small" href="{{ url_for('auth.login') }}">Entrar</a>
-        {% endif %}
-    </nav>
+    <div class="topbar-left">
+        <label class="menu-toggle" for="menuCheck" aria-label="Abrir menu"><span></span><span></span><span></span></label>
+        <a class="brand" href="{{ url_for('main.home') }}">
+            <img src="{{ url_for('static', filename='logo.png') }}" alt="Avivamento">
+            <span>AVIVAMENTO</span>
+        </a>
+    </div>
+    <div class="topbar-context"><span class="status-dot"></span><span>Comunidade online</span></div>
+    <div class="topbar-spacer"></div>
+    {% if current_user.is_authenticated %}
+      <a class="topbar-user" href="{{ url_for('main.profile') }}" aria-label="Abrir perfil">
+        <span class="topbar-avatar">{{ current_user.username[:1]|upper }}</span>
+        <span class="topbar-user-copy"><strong>{{ current_user.username }}</strong><small>{{ 'Administrador' if current_user.role == 'admin' else 'Membro' }}</small></span>
+      </a>
+    {% else %}
+      <a class="topbar-login" href="{{ url_for('auth.login') }}">Entrar</a>
+    {% endif %}
 </header>
-<main class="container">
+
+<aside class="side-menu" id="sideNav" aria-label="Navegação principal">
+  <div class="side-brand">
+    <img class="side-logo" src="{{ url_for('static', filename='logo.png') }}" alt="">
+    <div><strong>Igreja Avivamento</strong><small>fé · comunidade · propósito</small></div>
+  </div>
+  <div class="side-area">
+    <div class="side-label">NAVEGAÇÃO</div>
+    <nav class="side-nav">
+      <a class="side-link {% if request.endpoint == 'main.home' %}active{% endif %}" href="{{ url_for('main.home') }}"><span class="nav-icon"><img src="{{ url_for('static', filename='icons/ui/home.svg') }}" alt=""></span><b>Início</b></a>
+      <details class="side-section" open data-section="igreja">
+        <summary class="side-section-title"><span>Conheça a igreja</span></summary>
+        <div class="side-section-links">
+          <a class="side-link" href="{{ url_for('main.home') }}#igreja"><span class="nav-icon"><img src="{{ url_for('static', filename='icons/ui/file.svg') }}" alt=""></span><b>Nossa história</b></a>
+          <a class="side-link" href="{{ url_for('main.home') }}#pastores"><span class="nav-icon"><img src="{{ url_for('static', filename='icons/ui/users.svg') }}" alt=""></span><b>Pastores</b></a>
+        </div>
+      </details>
+      {% if current_user.is_authenticated %}
+      <details class="side-section" open data-section="conta">
+        <summary class="side-section-title"><span>Minha conta</span></summary>
+        <div class="side-section-links">
+          <a class="side-link {% if request.endpoint == 'main.profile' %}active{% endif %}" href="{{ url_for('main.profile') }}"><span class="nav-icon"><img src="{{ url_for('static', filename='icons/ui/users.svg') }}" alt=""></span><b>Meu perfil</b></a>
+        </div>
+      </details>
+      {% endif %}
+      {% if current_user.is_authenticated and current_user.role == 'admin' %}
+      <details class="side-section" open data-section="gestao">
+        <summary class="side-section-title"><span>Gestão</span></summary>
+        <div class="side-section-links">
+          <a class="side-link {% if request.endpoint == 'admin.dashboard' %}active{% endif %}" href="{{ url_for('admin.dashboard') }}"><span class="nav-icon"><img src="{{ url_for('static', filename='icons/ui/home.svg') }}" alt=""></span><b>Visão geral</b></a>
+          <a class="side-link {% if request.endpoint in ['admin.pastors','admin.new_pastor','admin.edit_pastor','admin.delete_pastor'] %}active{% endif %}" href="{{ url_for('admin.pastors') }}"><span class="nav-icon"><img src="{{ url_for('static', filename='icons/ui/users.svg') }}" alt=""></span><b>Pastores</b></a>
+          <a class="side-link {% if request.endpoint == 'admin.users' %}active{% endif %}" href="{{ url_for('admin.users') }}"><span class="nav-icon"><img src="{{ url_for('static', filename='icons/ui/users.svg') }}" alt=""></span><b>Usuários</b></a>
+        </div>
+      </details>
+      {% endif %}
+    </nav>
+  </div>
+  <div class="side-bottom">
+    {% if current_user.is_authenticated %}
+      <div class="side-user"><div class="user-avatar">{{ current_user.username[:1]|upper }}</div><div class="side-user-text"><strong>{{ current_user.username }}</strong><small>{{ 'Administrador' if current_user.role == 'admin' else 'Membro' }}</small></div></div>
+      <a class="side-logout" href="{{ url_for('auth.logout') }}"><span>↪</span> Sair</a>
+    {% else %}
+      <a class="side-install" href="{{ url_for('auth.login') }}"><span class="nav-icon"><img src="{{ url_for('static', filename='icons/ui/arrow.svg') }}" alt=""></span><b>Entrar na comunidade</b></a>
+    {% endif %}
+  </div>
+</aside>
+<label class="menu-overlay" for="menuCheck" aria-label="Fechar menu"></label>
+
+<main class="site-main">
+    <div class="content-container">
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}<div class="flash-stack">{% for category, message in messages %}<div class="flash {{ category }}">{{ message }}</div>{% endfor %}</div>{% endif %}
     {% endwith %}
     {% block content %}{% endblock %}
+    </div>
 </main>
-<footer class="footer">AVIVAMENTO · fé, comunidade e propósito</footer>
+<footer class="site-footer">AVIVAMENTO <span>•</span> fé <span>•</span> comunidade <span>•</span> propósito</footer>
 <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+<script src="{{ url_for('static', filename='js/sidebar-nav.js') }}"></script>
 {% block extra_js %}{% endblock %}
 </body>
 </html>
