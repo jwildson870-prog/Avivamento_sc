@@ -2,6 +2,7 @@ from pathlib import Path
 from flask import Flask
 from flask_login import LoginManager
 from .models import db, User
+from .migrations import run_migrations
 from .storage import image_url
 
 login_manager = LoginManager()
@@ -26,7 +27,7 @@ def create_app():
     app.register_blueprint(admin, url_prefix='/admin')
 
     with app.app_context():
-        db.create_all()
+        run_migrations()
         if app.config.get('INITIAL_ADMIN_PASSWORD') and not User.query.filter_by(username=app.config['INITIAL_ADMIN_USERNAME']).first():
             User.create_admin(app.config['INITIAL_ADMIN_USERNAME'], app.config['INITIAL_ADMIN_EMAIL'], app.config['INITIAL_ADMIN_PASSWORD'])
 
