@@ -43,7 +43,7 @@
     border: 1px solid rgba(255,255,255,.15); border-radius: 12px; color: #fff;
     font-size: 1rem; outline: none; transition: border .3s, background .3s;
 }
-.login-container input:focus { border-color: #8dbdff; background: rgba(255,255,255,.07); }
+.login-container input:focus { border-color: #888; background: rgba(255,255,255,.1); }
 .login-container input::placeholder { color: #777; }
 
 .input-senha { position: relative; }
@@ -71,7 +71,7 @@
 .btn-entrar:active { transform: translateY(0); }
 
 .divisor { text-align: center; color: #666; font-size: .85rem; margin: 10px 0 20px; position: relative; }
-.divisor::before, .divisor::after { content: ''; position: absolute; top: 50%; width: 30%; height: 1px; background: rgba(255,255,255,.07); }
+.divisor::before, .divisor::after { content: ''; position: absolute; top: 50%; width: 30%; height: 1px; background: rgba(255,255,255,.1); }
 .divisor::before { left: 0; } .divisor::after { right: 0; }
 .texto-conta { text-align: center; color: #999; font-size: .9rem; margin: 0; }
 .link-conta { color: #fff; text-decoration: none; font-weight: 500; margin-left: 4px; }
