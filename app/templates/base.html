@@ -32,11 +32,12 @@
     {% block content %}{% endblock %}
 </main>
 <footer class="footer">AVIVAMENTO · fé, comunidade e propósito</footer>
-<div class="image-lightbox" id="image-lightbox" hidden aria-hidden="true" role="dialog" aria-modal="true" aria-label="Visualização da foto">
-    <button class="image-lightbox-close" id="image-lightbox-close" type="button" aria-label="Fechar foto">×</button>
-    <div class="image-lightbox-backdrop" data-lightbox-close></div>
-    <div class="image-lightbox-content">
-        <img id="image-lightbox-image" src="" alt="Foto ampliada">
+<div class="media-lightbox" id="media-lightbox" hidden aria-hidden="true" role="dialog" aria-modal="true" aria-label="Visualização de mídia">
+    <button class="media-lightbox-close" id="media-lightbox-close" type="button" aria-label="Fechar visualização">×</button>
+    <div class="media-lightbox-backdrop" data-lightbox-close></div>
+    <div class="media-lightbox-content">
+        <img id="media-lightbox-image" src="" alt="Mídia ampliada" hidden>
+        <video id="media-lightbox-video" controls playsinline preload="metadata" hidden></video>
     </div>
 </div>
 <script src="{{ url_for('static', filename='js/app.js') }}"></script>
