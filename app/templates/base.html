@@ -13,34 +13,33 @@
 </head>
 <body>
 <header class="topbar">
-    <button class="sidebar-toggle" type="button" aria-label="Abrir menu" aria-controls="site-sidebar" aria-expanded="false">☰</button>
     <a class="brand" href="{{ url_for('main.home') }}"><img src="{{ url_for('static', filename='logo.png') }}" alt="Avivamento"><span>AVIVAMENTO</span></a>
-    <nav><a href="{{ url_for('main.home') }}">Início</a>{% if current_user.is_authenticated %}<a href="{{ url_for('main.profile') }}">Perfil</a>{% if current_user.role == 'admin' %}<a href="{{ url_for('admin.dashboard') }}">Admin</a>{% endif %}<a class="link-muted" href="{{ url_for('auth.logout') }}">Sair</a>{% else %}<a class="btn btn-blue btn-small" href="{{ url_for('auth.login') }}">Entrar</a>{% endif %}</nav>
+    <nav>
+        <a href="{{ url_for('main.home') }}">Início</a>
+        {% if current_user.is_authenticated %}
+            <a href="{{ url_for('main.profile') }}">Perfil</a>
+            {% if current_user.role == 'admin' %}<a href="{{ url_for('admin.dashboard') }}">Admin</a>{% endif %}
+            <a class="link-muted" href="{{ url_for('auth.logout') }}">Sair</a>
+        {% else %}
+            <a class="btn btn-blue btn-small" href="{{ url_for('auth.login') }}">Entrar</a>
+        {% endif %}
+    </nav>
 </header>
-<div class="sidebar-backdrop" data-sidebar-close></div>
-<aside class="site-sidebar" id="site-sidebar" aria-label="Navegação principal">
-  <div class="sidebar-head"><div><p class="eyebrow">NAVEGAÇÃO</p><strong>Avivamento</strong></div><button class="sidebar-close" type="button" aria-label="Fechar menu" data-sidebar-close>×</button></div>
-  <nav class="sidebar-nav">
-    <a href="{{ url_for('main.home') }}"><img src="{{ url_for('static', filename='icons/ui/home.svg') }}">Início</a>
-    <a href="{{ url_for('main.church_page') }}"><img src="{{ url_for('static', filename='icons/ui/home.svg') }}">Igreja</a>
-    <a href="{{ url_for('main.notices_page') }}"><img src="{{ url_for('static', filename='icons/ui/bell.svg') }}">Avisos</a>
-    <a href="{{ url_for('main.schedule_page') }}"><img src="{{ url_for('static', filename='icons/ui/file.svg') }}">Cronograma</a>
-    <a href="{{ url_for('main.pastors_page') }}"><img src="{{ url_for('static', filename='icons/ui/users.svg') }}">Pastores</a>
-    <a href="{{ url_for('main.announcements_page') }}"><img src="{{ url_for('static', filename='icons/ui/plus.svg') }}">Anúncios</a>
-    {% if current_user.is_authenticated %}<a href="{{ url_for('main.profile') }}"><img src="{{ url_for('static', filename='icons/ui/settings.svg') }}">Meu perfil</a>{% endif %}
-    {% if current_user.is_authenticated and current_user.role == 'admin' %}
-    <details class="side-section" data-section="admin"><summary>Administração</summary><div class="side-subnav"><a href="{{ url_for('admin.dashboard') }}">Painel</a><a href="{{ url_for('admin.notices') }}">Gerenciar avisos</a><a href="{{ url_for('admin.schedule') }}">Gerenciar cronograma</a><a href="{{ url_for('admin.pastors') }}">Gerenciar pastores</a><a href="{{ url_for('admin.announcements') }}">Gerenciar anúncios</a><a href="{{ url_for('admin.users') }}">Usuários</a></div></details>
-    {% endif %}
-  </nav>
-  <div class="sidebar-foot">{% if current_user.is_authenticated %}<span>Entrou como <b>{{ 'Administrador' if current_user.role == 'admin' else 'Membro' }}</b></span>{% else %}<a class="btn btn-blue full" href="{{ url_for('auth.login') }}">Entrar</a>{% endif %}</div>
-</aside>
 <main class="container">
-    {% with messages = get_flashed_messages(with_categories=true) %}{% if messages %}<div class="flash-stack">{% for category, message in messages %}<div class="flash {{ category }}">{{ message }}</div>{% endfor %}</div>{% endif %}{% endwith %}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}<div class="flash-stack">{% for category, message in messages %}<div class="flash {{ category }}">{{ message }}</div>{% endfor %}</div>{% endif %}
+    {% endwith %}
     {% block content %}{% endblock %}
 </main>
 <footer class="footer">AVIVAMENTO · fé, comunidade e propósito</footer>
+<div class="image-lightbox" id="image-lightbox" hidden aria-hidden="true" role="dialog" aria-modal="true" aria-label="Visualização da foto">
+    <button class="image-lightbox-close" id="image-lightbox-close" type="button" aria-label="Fechar foto">×</button>
+    <div class="image-lightbox-backdrop" data-lightbox-close></div>
+    <div class="image-lightbox-content">
+        <img id="image-lightbox-image" src="" alt="Foto ampliada">
+    </div>
+</div>
 <script src="{{ url_for('static', filename='js/app.js') }}"></script>
-<script src="{{ url_for('static', filename='js/sidebar-nav.js') }}"></script>
 {% block extra_js %}{% endblock %}
 </body>
 </html>

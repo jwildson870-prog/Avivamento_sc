@@ -27,8 +27,6 @@ def create_app():
 
     with app.app_context():
         db.create_all()
-        from .migrations import migrate_existing_schema
-        migrate_existing_schema()
         if app.config.get('INITIAL_ADMIN_PASSWORD') and not User.query.filter_by(username=app.config['INITIAL_ADMIN_USERNAME']).first():
             User.create_admin(app.config['INITIAL_ADMIN_USERNAME'], app.config['INITIAL_ADMIN_EMAIL'], app.config['INITIAL_ADMIN_PASSWORD'])
 
