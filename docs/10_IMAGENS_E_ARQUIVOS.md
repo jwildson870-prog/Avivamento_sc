@@ -14,3 +14,7 @@ Variáveis no Render:
 O bucket pode permanecer privado. O aplicativo gera URLs temporárias assinadas para exibir as imagens.
 
 Sem credenciais B2, o sistema usa `app/static/uploads/` localmente.
+
+
+### Fotos de perfil
+As fotos de perfil usam uma área exclusiva em `app/static/uploads/profile/`. Cada usuário recebe seu próprio caminho (`profile/user_ID/`) e o banco de dados guarda apenas a chave/caminho do arquivo em `User.photo`. Em produção, quando o Backblaze B2 estiver configurado, a mesma chave é usada no bucket.

@@ -34,13 +34,12 @@ def save_image(file_storage, prefix: str) -> str | None:
     ext = _safe_extension(file_storage.filename)
     if not ext:
         return None
-    key = f"images/{prefix}_{uuid4().hex}{ext}"
+    key = f"profile/{prefix}/{uuid4().hex}{ext}" if prefix.startswith('user_') else f"images/{prefix}_{uuid4().hex}{ext}"
     if _b2_enabled():
         content_type = file_storage.mimetype or 'application/octet-stream'
         _client().upload_fileobj(file_storage, current_app.config['B2_BUCKET_NAME'], key, ExtraArgs={'ContentType': content_type})
         return key
-    filename = Path(key).name
-    destination = Path(current_app.config['UPLOAD_FOLDER']) / filename
+    destination = Path(current_app.config['UPLOAD_FOLDER']) / key
     destination.parent.mkdir(parents=True, exist_ok=True)
     file_storage.save(destination)
     return filename
@@ -54,7 +53,7 @@ def delete_image(key: str | None) -> None:
         except Exception:
             current_app.logger.exception('Falha ao apagar imagem do Backblaze B2: %s', key)
         return
-    path = Path(current_app.config['UPLOAD_FOLDER']) / Path(key).name
+    path = Path(current_app.config['UPLOAD_FOLDER']) / key
     if path.exists():
         path.unlink()
 
@@ -63,4 +62,4 @@ def image_url(key: str | None) -> str | None:
         return None
     if _b2_enabled() and key.startswith('images/'):
         return _client().generate_presigned_url('get_object', Params={'Bucket': current_app.config['B2_BUCKET_NAME'], 'Key': key}, ExpiresIn=current_app.config['B2_PRESIGNED_URL_SECONDS'])
-    return f"/static/uploads/{Path(key).name}"
+    return f"/static/uploads/{key}"
