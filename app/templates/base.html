@@ -12,7 +12,11 @@
     {% block extra_css %}{% endblock %}
 </head>
 <body>
-<header class="topbar">
+{% set show_sidebar = current_user.is_authenticated and (request.endpoint == 'main.profile' or (request.endpoint and request.endpoint.startswith('admin.'))) %}
+<header class="topbar{% if show_sidebar %} has-sidebar{% endif %}">
+    {% if show_sidebar %}
+    <button class="sidebar-toggle" id="sidebar-toggle" type="button" aria-label="Abrir menu lateral" aria-controls="app-sidebar" aria-expanded="false">☰</button>
+    {% endif %}
     <a class="brand" href="{{ url_for('main.home') }}"><img src="{{ url_for('static', filename='logo.png') }}" alt="Avivamento"><span>AVIVAMENTO</span></a>
     <nav>
         <a href="{{ url_for('main.home') }}">Início</a>
@@ -25,7 +29,32 @@
         {% endif %}
     </nav>
 </header>
-<main class="container">
+{% if show_sidebar %}
+<div class="sidebar-backdrop" id="sidebar-backdrop" hidden></div>
+<aside class="app-sidebar" id="app-sidebar" aria-label="Menu lateral" aria-hidden="true">
+    <div class="sidebar-head">
+        <div class="sidebar-title"><img src="{{ url_for('static', filename='logo.png') }}" alt=""><span>AVIVAMENTO</span></div>
+        <button class="sidebar-close" id="sidebar-close" type="button" aria-label="Fechar menu">×</button>
+    </div>
+    <nav class="sidebar-nav">
+        <a href="{{ url_for('main.profile') }}" class="sidebar-link{% if request.endpoint == 'main.profile' %} active{% endif %}"><img src="{{ url_for('static', filename='icons/ui/users.svg') }}" alt="">Meu perfil</a>
+        <a href="{{ url_for('main.home') }}#igreja" class="sidebar-link"><img src="{{ url_for('static', filename='icons/ui/home.svg') }}" alt="">Igreja</a>
+        <a href="{{ url_for('main.home') }}#pastores" class="sidebar-link"><img src="{{ url_for('static', filename='icons/ui/users.svg') }}" alt="">Pastores</a>
+        {% if current_user.role == 'admin' %}
+        <details class="side-section" data-section="admin" {% if request.endpoint and request.endpoint.startswith('admin.') %}open{% endif %}>
+            <summary>Administração</summary>
+            <div class="sidebar-subnav">
+                <a href="{{ url_for('admin.dashboard') }}" class="sidebar-link{% if request.endpoint == 'admin.dashboard' %} active{% endif %}"><img src="{{ url_for('static', filename='icons/ui/settings.svg') }}" alt="">Painel</a>
+                <a href="{{ url_for('admin.users') }}" class="sidebar-link{% if request.endpoint == 'admin.users' %} active{% endif %}"><img src="{{ url_for('static', filename='icons/ui/users.svg') }}" alt="">Usuários</a>
+                <a href="{{ url_for('admin.pastors') }}" class="sidebar-link{% if request.endpoint == 'admin.pastors' %} active{% endif %}"><img src="{{ url_for('static', filename='icons/ui/users.svg') }}" alt="">Pastores</a>
+            </div>
+        </details>
+        {% endif %}
+    </nav>
+    <a class="sidebar-logout" href="{{ url_for('auth.logout') }}">Sair</a>
+</aside>
+{% endif %}
+<main class="container{% if show_sidebar %} with-sidebar-space{% endif %}">
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}<div class="flash-stack">{% for category, message in messages %}<div class="flash {{ category }}">{{ message }}</div>{% endfor %}</div>{% endif %}
     {% endwith %}
@@ -40,6 +69,7 @@
         <video id="media-lightbox-video" controls playsinline preload="metadata" hidden></video>
     </div>
 </div>
+<script src="{{ url_for('static', filename='js/sidebar-nav.js') }}"></script>
 <script src="{{ url_for('static', filename='js/app.js') }}"></script>
 {% block extra_js %}{% endblock %}
 </body>
